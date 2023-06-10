@@ -29,7 +29,18 @@ async function run() {
 
 
 
-    
+
+    const usersCollection = client.db('bedRockYogaDB').collection('users')
+    // manage user api
+    // app.post('/users',async(req,res) => {
+    //   const user = req.body;
+    //   const result = await usersCollection.insertOne(user);
+    //   res.send(result)
+    // })
+
+   
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -55,12 +66,12 @@ run().catch(console.dir);
 
 
 
-app.get('/',(req,res) => {
-    res.send('BedRock Yoga is Running')
+app.get('/', (req, res) => {
+  res.send('BedRock Yoga is Running')
 })
 
-app.listen(port,() => {
-    console.log(`BedRock Yoga is running on port : ${port}`);
+app.listen(port, () => {
+  console.log(`BedRock Yoga is running on port : ${port}`);
 })
 
 
