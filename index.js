@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 const port = process.env.PORT || 5000;
 const app = express()
@@ -31,12 +31,39 @@ async function run() {
 
 
     const usersCollection = client.db('bedRockYogaDB').collection('users')
+    const allClassesCollection = client.db('bedRockYogaDB').collection('allClasses')
+
+    // classes apis
+    app.get('/allclasses/:email', async (req, res) => {
+      const email = req.params.email;
+      const filter = {instructorEmail: email}
+      const result = await allClassesCollection.find(filter).toArray();
+      res.send(result)
+    })
+
+    app.put('/updateclass/:id',async(req,res) => {
+      const id = req.params.id;
+      const user = req.body;
+      const filter = {_id : new ObjectId(id)}
+      const options = {upsert: true}
+      const updateDoc = {
+        $set: {
+          className: user.className,
+          classImage: user.classImage,
+          availableSeats: user.availableSeats,
+          price: user.price
+        }
+      }
+      const result = await allClassesCollection.updateOne(filter,updateDoc,options)
+      res.send(result)
+    })
+
     // manage user api
-    // app.post('/users',async(req,res) => {
-    //   const user = req.body;
-    //   const result = await usersCollection.insertOne(user);
-    //   res.send(result)
-    // })
+    app.post('/addclass', async (req, res) => {
+      const allClass = req.body;
+      const result = await allClassesCollection.insertOne(allClass);
+      res.send(result)
+    })
 
     app.put("/users/:email", async (req, res) => {
       const email = req.params.email;
@@ -44,9 +71,9 @@ async function run() {
       const query = { email: email }
       const options = { upsert: true }
       const updateDoc = {
-        $set:user ,
+        $set: user,
       }
-      const result = await  usersCollection.updateOne(query,updateDoc,options)
+      const result = await usersCollection.updateOne(query, updateDoc, options)
       res.send(result)
     })
 
