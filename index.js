@@ -34,6 +34,11 @@ async function run() {
     const allClassesCollection = client.db('bedRockYogaDB').collection('allClasses')
 
     // classes apis
+    app.get('/alldata',async(req,res) => {
+      const result = await allClassesCollection.find().toArray()
+      res.send(result)
+    })
+
     app.get('/allclasses/:email', async (req, res) => {
       const email = req.params.email;
       const filter = {instructorEmail: email}
@@ -60,6 +65,11 @@ async function run() {
     })
 
     // manage user api
+
+    app.get('/users',async(req,res) => {
+      const result = await usersCollection.find().toArray()
+      res.send(result)
+    })
     app.post('/addclass', async (req, res) => {
       const allClass = req.body;
       const result = await allClassesCollection.insertOne(allClass);
