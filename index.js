@@ -100,6 +100,7 @@ async function run() {
 
     // save user 
     app.put("/users/:email", async (req, res) => {
+      // console.log('consoled');
       const email = req.params.email;
       const user = req.body;
       const query = { email: email }
@@ -108,6 +109,7 @@ async function run() {
         $set: user,
       }
       const result = await usersCollection.updateOne(query, updateDoc, options)
+      console.log(result);
       res.send(result)
     })
 
@@ -126,11 +128,17 @@ async function run() {
     })
 
     // selected class for student
+    app.get('/getselectedclass/:email',async(req,res) => {
+      const email = req.params.email;
+      const result = await selectedClass.find({instructorEmail:email}).toArray()
+      res.send(result)
+    })
     app.post('/selectedclass',async(req,res)=> {
       const body = req.body
       const result = await selectedClass.insertOne(body)
       res.send(result)
     })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
