@@ -32,6 +32,7 @@ async function run() {
 
     const usersCollection = client.db('bedRockYogaDB').collection('users')
     const allClassesCollection = client.db('bedRockYogaDB').collection('allClasses')
+    const selectedClass = client.db('bedRockYogaDB').collection('selectedClass')
 
     // classes apis
     app.get('/alldata',async(req,res) => {
@@ -59,6 +60,8 @@ async function run() {
       res.send(result)
     })
 
+    // get all instructor 
+    
     
     app.put('/updateclass/:id',async(req,res) => {
       const id = req.params.id;
@@ -83,18 +86,22 @@ async function run() {
       const result = await usersCollection.find().toArray()
       res.send(result)
     })
+    // get all instructor
+    app.get('/instructors',async(req,res) => {
+      const result = await usersCollection.find({role : 'instructor'}).toArray()
+      res.send(result)
+
+    })
     app.post('/addclass', async (req, res) => {
       const allClass = req.body;
       const result = await allClassesCollection.insertOne(allClass);
       res.send(result)
     })
 
+    // save user 
     app.put("/users/:email", async (req, res) => {
       const email = req.params.email;
       const user = req.body;
-      
-     
-
       const query = { email: email }
       const options = { upsert: true }
       const updateDoc = {
@@ -104,6 +111,26 @@ async function run() {
       res.send(result)
     })
 
+
+
+    // updated approved status
+    app.put('/allclasses/:id', async (req, res) => {
+      const id = req.params.id;
+      const status = req.body;
+      const filter = {_id: new ObjectId(id)}
+      const updateDoc = {
+        $set:status
+      }
+      const result = await allClassesCollection.updateOne(filter,updateDoc)
+      res.send(result)
+    })
+
+    // selected class for student
+    app.post('/selectedclass',async(req,res)=> {
+      const body = req.body
+      const result = await selectedClass.insertOne(body)
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
