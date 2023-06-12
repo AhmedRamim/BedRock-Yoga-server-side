@@ -45,6 +45,19 @@ async function run() {
       const result = await allClassesCollection.find(filter).toArray();
       res.send(result)
     })
+    app.get('/status', async (req, res) => {
+      const filter = {status: 'approved'}
+      const result = await allClassesCollection.find(filter).toArray();
+      res.send(result)
+    })
+
+    // get specific user for role
+    app.get('/user/:email',async(req,res) => {
+      const email = req.params.email;
+      const filter = {email : email}
+      const result = await usersCollection.findOne(filter)
+      res.send(result)
+    })
 
     
     app.put('/updateclass/:id',async(req,res) => {
@@ -79,6 +92,9 @@ async function run() {
     app.put("/users/:email", async (req, res) => {
       const email = req.params.email;
       const user = req.body;
+      
+     
+
       const query = { email: email }
       const options = { upsert: true }
       const updateDoc = {
